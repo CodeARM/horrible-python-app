@@ -2,22 +2,13 @@
 # Docker build + push pipeline for Azure DevOps
 
 trigger:
-  branches:
-    include:
-      - main
-      - develop
-
-pr:
-  branches:
-    include:
-      - main
-      - develop
+  - main
 
 variables:
-  imageName: my-app
+  imageName: pythonapp
   dockerfilePath: Dockerfile
-  containerRegistryServiceConnection: my-acr-service-connection
-  containerRegistry: myregistry.azurecr.io
+  containerRegistryServiceConnection: 8a7c3aae-cd07-43df-8e1c-f3eef056dc6c
+  containerRegistry: smallacr042022.azurecr.io
   tag: $(Build.BuildId)
 
 pool:

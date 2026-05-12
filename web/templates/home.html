@@ -1,10 +1,44 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <title>Current Tasks and Create Task</title>
+</head>
+<body>
+<h1>List of tasks</h1>
 
 {% block content %}
-<h1>List of tasks</h1>
-<p>Welcome to the containerized Django app.</p>
-<p><text>   </text> </p>
-<p> dropdown list</p>
-<p>dropdownlist context </p>
-
+<ul>
+    {% for task in tasks %}
+      <li>@ {{ task.context }} - {{ task.title }} - <i>project</i> {{ task.project }}</li>
+    {% endfor %}
+  </ul>
 {% endblock %}
+            <div class="card-body">
+                <h5 class="card-title">Add New Task</h5>
+                <form id="addTodoForm">
+                <form method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{ form.title.id_for_label }" class="form-label">Task <span class="text-danger">*</span></label>
+                            {{ form.title }}                           
+                            <input type="text" class="form-control" id="task" placeholder="Enter task" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.context.id_for_label }}" class="form-label">Context</label>
+                            {{ form.context }}
+                            <input type="text" class="form-control" id="context" placeholder="e.g., out, office">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.project.id_for_label }}" class="form-label">Project</label>
+                            {{ form.project }}
+                            <input type="text" class="form-control" id="project">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </form>
+            </div>
+</body>
+</html>

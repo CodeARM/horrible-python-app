@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <title>Create Task</title>
+</head>
+<body>
+
+    <h1>Create Task</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Title</label>
+            {{ form.title }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.context.id_for_label }}">Context</label>
+            {{ form.context }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.project.id_for_label }}">Project</label>
+            {{ form.project }}
+        </div>
+
+        <button type="submit">Create Task</button>
+    </form>
+
+</body>
+</html>

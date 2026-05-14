@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="/../static/css/style.css">
     <title>Current Tasks and Create Task</title>
 </head>
 <body>
-<h1>List of tasks</h1>
+<h2 class="card-title">Add New Task</h2>
+
+<form method="POST" action="{% url 'create_task' %}">
+    {% csrf_token %}
+    <div class="col-md-6">
+        <label for="{{ form.title.id_for_label }}" class="form-label">Task </label>
+        {{ form.title }}
+    </div>
+    <div>
+        <label for="{{ form.context.id_for_label }}" class="form-label">Context</label>
+        {{ form.context }}
+    </div>
+    <div>
+        <label for="{{ form.project.id_for_label }}" class="form-label">Project</label>
+        {{ form.project }}
+    </div>
+    <div>
+    <button type="submit" class="btn btn-primary">Add Task</button>
+    </div>
+</form> 
+
+
+<div class="col-md-6">
+<h2>List of tasks</h2>
 
 {% block content %}
 <ul>
@@ -14,31 +37,6 @@
     {% endfor %}
   </ul>
 {% endblock %}
-            <div class="card-body">
-                <h5 class="card-title">Add New Task</h5>
-                <form id="addTodoForm">
-                <form method="POST">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{ form.title.id_for_label }" class="form-label">Task <span class="text-danger">*</span></label>
-                            {{ form.title }}                           
-                            <input type="text" class="form-control" id="task" placeholder="Enter task" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.context.id_for_label }}" class="form-label">Context</label>
-                            {{ form.context }}
-                            <input type="text" class="form-control" id="context" placeholder="e.g., out, office">
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.project.id_for_label }}" class="form-label">Project</label>
-                            {{ form.project }}
-                            <input type="text" class="form-control" id="project">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Task</button>
-                </form>
-            </div>
+</div>
 </body>
 </html>

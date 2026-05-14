@@ -3,7 +3,10 @@ body {
   max-width: 700px;
   margin: auto;
   background-color: #f8f9fa;
-  padding: 20px 0;
+}
+
+div {
+  padding: 10px;
 }
 
 nav {

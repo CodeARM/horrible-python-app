@@ -1,1 +1,0 @@
-console.log("Django container app loaded");

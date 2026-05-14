@@ -2,16 +2,16 @@ from django.db import models
 
 class Task(models.Model):
     CONTEXT_CHOICES = [
-        ("_____", "_____"),
-        ("out", "out"),
+        ("---", "---"),
+        ("out|side", "out|side"),
         ("home", "home"),
         ("office", "office"),
         ("computer", "computer"),
     ]
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=200)
-    context = models.CharField(max_length=25, choices=CONTEXT_CHOICES, blank=False, default="_____")
-    project = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    context = models.CharField(max_length=10, choices=CONTEXT_CHOICES, blank=False, default="---")
+    project = models.CharField(max_length=50)
 
     class Meta:
         db_table = "tasks"

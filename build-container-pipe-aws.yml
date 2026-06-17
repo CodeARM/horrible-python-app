@@ -57,7 +57,7 @@ stages:
 
           # ── 4. Build images via Docker Compose (fmly docker compose build web db)────────────────────────
           - script: |
-              docker build 
+              docker compose -f $(Build.SourcesDirectory)/docker-compose.yml build web db
             displayName: "docker compose build (web, db)"
             workingDirectory: $(Build.SourcesDirectory)
 

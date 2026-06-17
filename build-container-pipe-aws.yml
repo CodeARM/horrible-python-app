@@ -59,6 +59,7 @@ stages:
           - script: |
               docker build 
             displayName: "docker compose build (web, db)"
+            workingDirectory: $(Build.SourcesDirectory)
 
           # ── 5. Tag & push — web ───────────────────────────────────────
           - script: |

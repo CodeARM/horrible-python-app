@@ -19,6 +19,8 @@ variables:
     value: "us-east-1"                                     # your ECR region
   - name: IMAGE_TAG
     value: "$(Build.BuildId)"
+  - name: POSTGRES_VERSION
+    value: "16"
 
 pool:
   vmImage: ubuntu-latest
@@ -57,38 +59,37 @@ stages:
 
           # ── 4. Build images via Docker Compose (fmly docker compose build web db)────────────────────────
           - script: |
-              docker compose -f $(Build.SourcesDirectory)/docker-compose.yml build web db
-            displayName: "docker compose build (web, db)"
-            workingDirectory: $(Build.SourcesDirectory)
+              docker build \
+              -t $(ECR_REGISTRY)/$(ECR_REPO_WEB):$(IMAGE_TAG) \ 
+              -t $(ECR_REGISTRY)/$(ECR_REPO_WEB):latest \
+              -f $(Build.SourcesDirectory)/Dockerfile \
+              $(Build.SourcesDirectory)
+            displayName: "build web image"
 
-          # ── 5. Tag & push — web ───────────────────────────────────────
+          # ── 5. Push web --> ECR ───────────────────────────────────────
           - script: |
-              # Grab the image name Compose assigned, then retag for ECR
-              WEB_IMAGE=$(docker compose images -q web)
-
-              docker tag "$WEB_IMAGE" $(ECR_REGISTRY)/$(ECR_REPO_WEB):$(IMAGE_TAG)
-              docker tag "$WEB_IMAGE" $(ECR_REGISTRY)/$(ECR_REPO_WEB):latest
-
               docker push $(ECR_REGISTRY)/$(ECR_REPO_WEB):$(IMAGE_TAG)
               docker push $(ECR_REGISTRY)/$(ECR_REPO_WEB):latest
-            displayName: "Tag & push web → ECR"
+            displayName: "Push web → ECR"
 
-          # ── 6. Tag & push — db ────────────────────────────────────────
+          # ── 6. Mirror postgres --> ECR ───────────────────────────────────────
           - script: |
-              DB_IMAGE=$(docker compose images -q db)
+              docker pull postgres:$(POSTGRES_VERSION)
+              docker tag postgres:$(POSTGRES_VERSION) $(ECR_REGISTRY)/$(ECR_REPO_WEB):$(POSTGRES_VERSION)
+              docker tag postgres:$(POSTGRES_VERSION) $(ECR_REGISTRY)/$(ECR_REPO_WEB):latest
+            displayName: "Pull and tag postgres"
 
-              docker tag "$DB_IMAGE" $(ECR_REGISTRY)/$(ECR_REPO_DB):$(IMAGE_TAG)
-              docker tag "$DB_IMAGE" $(ECR_REGISTRY)/$(ECR_REPO_DB):latest
-
-              docker push $(ECR_REGISTRY)/$(ECR_REPO_DB):$(IMAGE_TAG)
+          # ── 7. Push db --> ECR ────────────────────────────────────────
+          - script: |
+              docker push $(ECR_REGISTRY)/$(ECR_REPO_DB):$(POSTGRES_VERSION)
               docker push $(ECR_REGISTRY)/$(ECR_REPO_DB):latest
-            displayName: "Tag & push db → ECR"
+            displayName: "Push db (postgres mirror) → ECR"
 
-          # ── 7. Summary ────────────────────────────────────────────────
+          # ── 8. Summary ────────────────────────────────────────────────
           - script: |
               echo "##vso[task.setvariable variable=WEB_IMAGE_URI;isOutput=true]$(ECR_REGISTRY)/$(ECR_REPO_WEB):$(IMAGE_TAG)"
               echo "##vso[task.setvariable variable=DB_IMAGE_URI;isOutput=true]$(ECR_REGISTRY)/$(ECR_REPO_DB):$(IMAGE_TAG)"
               echo "✅ Web : $(ECR_REGISTRY)/$(ECR_REPO_WEB):$(IMAGE_TAG)"
-              echo "✅ DB  : $(ECR_REGISTRY)/$(ECR_REPO_DB):$(IMAGE_TAG)"
+              echo "✅ DB  : $(ECR_REGISTRY)/$(ECR_REPO_DB):$(POSTGRES_VERSION)"
             displayName: "Print pushed image URIs"
             name: summary
